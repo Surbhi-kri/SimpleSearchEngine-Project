@@ -1,7 +1,7 @@
 package org.example;
 
 import java.nio.file.*;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class Main {
@@ -12,12 +12,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         str = new ArrayList<>();
         map = new HashMap<>();
         sc = new Scanner(System.in);
 
-        String fileName = "text.txt";
+        String fileName = null;
 
         for (int i = 0; i < args.length; i++) {
             if ("--data".equals(args[i]) && i + 1 < args.length) {
@@ -26,7 +25,21 @@ public class Main {
         }
 
         try {
-            str = new ArrayList<>(Files.readAllLines(Path.of(fileName)));
+            if (fileName != null) {
+                str = new ArrayList<>(Files.readAllLines(Path.of(fileName)));
+            } else {
+                InputStream input = Main.class.getResourceAsStream("/text.txt");
+
+                if (input == null) {
+                    System.out.println("Cannot find file!");
+                    return;
+                }
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+                str = new ArrayList<>(reader.lines().toList());
+                reader.close();
+            }
+
         } catch (IOException e) {
             System.out.println("Cannot read file!");
             return;
